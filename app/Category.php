@@ -18,3 +18,5 @@ class Category extends Model
         return $this->hasMany('\App\Item','category_id', 'id')->orderBy('name','ASC');
     }
 }
+
+// This is a test comment
