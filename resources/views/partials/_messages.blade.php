@@ -4,6 +4,13 @@
 	</div>
 @endif
 
+{{-- Added to display error msgs on index page --}}
+@if (Session::has('error'))
+	<div class="alert alert-danger" role="alert">
+		<strong>Error:</strong> {{ Session::get('error') }}
+	</div>
+@endif
+
 <!--check automatic form errors-->
 @if (count($errors)>0)
 	<div class="alert alert-danger" role="alert">

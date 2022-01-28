@@ -4,10 +4,17 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Category;
+use App\Item;
 use Session;
 
 class CategoryController extends Controller
 {
+    // Modify CATEGORY controller to be accessible only to authenticated users
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -16,7 +23,8 @@ class CategoryController extends Controller
     public function index()
     {
         $categories = Category::orderBy('name','ASC')->paginate(10);
-        return view('categories.index')->with('categories',$categories);
+        $items = Item::all();
+        return view('categories.index')->with('categories',$categories)->with('items',$items);
     }
 
     /**
@@ -72,7 +80,8 @@ class CategoryController extends Controller
     public function edit($id)
     {
         $category = Category::find($id);
-        return view('categories.edit')->with('category',$category);
+        $items = Item::all()->sortBy('title');
+        return view('categories.edit')->with('category',$category)->with('items',$items);
     }
 
     /**
@@ -101,6 +110,7 @@ class CategoryController extends Controller
         
     }
 
+    // DELETE CATGEORY
     /**
      * Remove the specified resource from storage.
      *
@@ -109,6 +119,33 @@ class CategoryController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $category = Category::find($id);
+        $items = Item::all();
+        // Ensure no items currently using category before deleting
+        // Scan 'items' table for 'category_id' of category to be deleted
+        foreach($items as $item)
+        {
+            $itemFound = false;
+            if($item->category_id == $category->id)
+            {
+                $itemFound = true;
+                break;
+            }
+        }
+
+        // If no items found to be using category
+        if(!$itemFound)
+        {
+            // Execute delete f(x)
+            $category->delete();
+            Session::flash('success','The category has been deleted');
+        }
+        else
+        {
+            // Otherwise, category still contains item(s). Display error msg:
+            Session::flash('error','The category could not be deleted');
+
+        }
+        return redirect()->route('categories.index');
     }
 }

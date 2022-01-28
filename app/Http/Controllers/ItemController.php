@@ -11,6 +11,12 @@ use Session;
 
 class ItemController extends Controller
 {
+    // Modify ITEM controller to be accessible only to authenticated users
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
+
     /**
      * Display a listing of the resource.
      *
