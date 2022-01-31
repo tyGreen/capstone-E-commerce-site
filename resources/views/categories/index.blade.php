@@ -56,7 +56,7 @@ Laravel Project
 									@endif
 								@endforeach
 								
-								{{-- If no items not found in category --}}
+								{{-- If no items found in category --}}
 								@if (!$itemFound)
 									{{-- Display DELETE btn for category  --}}
 									{!! Form::open(['route' => ['categories.destroy', $category->id], 'method'=>'DELETE']) !!}

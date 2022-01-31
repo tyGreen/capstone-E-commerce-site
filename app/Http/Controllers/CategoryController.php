@@ -121,11 +121,11 @@ class CategoryController extends Controller
     {
         $category = Category::find($id);
         $items = Item::all();
+        $itemFound = false;
         // Ensure no items currently using category before deleting
         // Scan 'items' table for 'category_id' of category to be deleted
         foreach($items as $item)
         {
-            $itemFound = false;
             if($item->category_id == $category->id)
             {
                 $itemFound = true;

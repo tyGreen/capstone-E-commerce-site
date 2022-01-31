@@ -81,7 +81,32 @@ class ItemController extends Controller
 
         $item->save(); //saves to DB
 
+        // flash success msg
         Session::flash('success','The item has been added');
+
+
+        // After image saved, perform two resizes
+        $image = $request->file('picture');
+        // Copy original img file into two new vars so we can work w/ copy of og img during each resize
+        // (reduces img distortion)
+        $imageToShrink = $image;
+        $imageToGrow = $image;
+
+        // 1: Thumbnail (tn_)
+        $imageToShrink = Image::make($imageToShrink);
+        $imageToShrink->resize(50, 50, function ($constraint) {
+            $constraint->aspectRatio();
+        });
+        $location ='images/items/' . 'tn_' . $filename;
+        Storage::disk('public')->put($location, (string) $imageToShrink->encode());
+
+        // 2: Large (lrg_)
+        $imageToGrow = Image::make($imageToGrow);
+        $imageToGrow->resize(200, 200, function ($constraint) {
+            $constraint->aspectRatio();
+        });
+        $location ='images/items/' . 'lrg_' . $filename;
+        Storage::disk('public')->put($location, (string) $imageToGrow->encode());
 
         //redirect
         return redirect()->route('items.index');
@@ -161,9 +186,32 @@ class ItemController extends Controller
 
         Session::flash('success','The item has been updated');
 
+
+        // After image saved, perform two resizes
+        $image = $request->file('picture');
+        // Copy original img file into two new vars so we can work w/ copy of og img during each resize
+        // (reduces img distortion)
+        $imageToShrink = $image;
+        $imageToGrow = $image;
+
+        // 1: Thumbnail (tn_)
+        $imageToShrink = Image::make($imageToShrink);
+        $imageToShrink->resize(50, 50, function ($constraint) {
+            $constraint->aspectRatio();
+        });
+        $location ='images/items/' . 'tn_' . $filename;
+        Storage::disk('public')->put($location, (string) $imageToShrink->encode());
+
+        // 2: Large (lrg_)
+        $imageToGrow = Image::make($imageToGrow);
+        $imageToGrow->resize(200, 200, function ($constraint) {
+            $constraint->aspectRatio();
+        });
+        $location ='images/items/' . 'lrg_' . $filename;
+        Storage::disk('public')->put($location, (string) $imageToGrow->encode());
+
         //redirect
-        return redirect()->route('items.index');
-        
+        return redirect()->route('items.index');     
     }
 
     /**

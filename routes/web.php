@@ -16,6 +16,9 @@ use Illuminate\Support\Facades\Route;
 // Routes for items & categories accesible only to authenticated users
 Route::resource('items', '\App\Http\Controllers\ItemController')->middleware('auth');
 Route::resource('categories', '\App\Http\Controllers\CategoryController')->middleware('auth');
+// Public route for public store (product) pages
+Route::resource('products', '\App\Http\Controllers\ProductController');
+Route::get('/products/details/{id}', '\App\Http\Controllers\ProductController@details')->name('products.details');
 
 Route::get('/', function () {
     return view('welcome');
