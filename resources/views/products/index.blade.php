@@ -11,7 +11,36 @@ Laravel Project
 @endsection
 
 @section('content')
-	
+
+{{-- @inject('session', 'App\Http\Controllers\SessionController')
+{{ $session::getData() }} --}}
+
+@php
+// GET current session data
+	// If current session has session id & ip address set
+	if(Session::has('session_id') && Session::has('ip_address'))
+	{
+		// Echo id & ip to screen
+		echo "session_id: " . Session::get('session_id');
+		echo "<br/>";
+		echo "ip_address: " . Session::get('ip_address');
+	}
+	else
+	{
+		// Otherwise, create new session
+        // Get user's ip address & store in var
+        $user_ip = Request::ip();
+
+        // Get current session id & store in var
+        $user_session = Session::getId();
+            // $session_id = session()->getId();    ALTERNATIVE
+
+        // Set session id and ip address to those passed into f(x)
+        Session::put('session_id', $user_session);
+        Session::put('ip_address', $user_ip);
+	}      
+@endphp 
+
 	<div class="row">
 		<div class="col-md-8 col-md-offset-1">
 			<h1>Product List</h1>
@@ -68,7 +97,7 @@ Laravel Project
 
 							<td style='width:70px;'>
                                 <div style='float:left; margin-right:5px;'>
-                                    <a href="{{ route('products.index', $item->id) }}" class="btn btn-success btn-sm">Buy Now</a>
+                                    <a href="{{ route('cart.addToCart', $item->id) }}" class="btn btn-success btn-sm" method="POST">Add To Cart</a>
                                 </div>
                                 <div style='float:left;'>
                                 </div>

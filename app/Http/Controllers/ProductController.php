@@ -9,8 +9,10 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Category;
 use App\Item;
+use App\Cart;
 use App\Product;
 use Session;
+use DB;
 
 class ProductController extends Controller
 {
