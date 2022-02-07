@@ -7,6 +7,9 @@ use App\Cart;
 use Session;
 use DB;
 use App\Item;
+use App\Order;
+use App\Receipt;
+
 
 class CartController extends Controller
 {
@@ -32,7 +35,6 @@ class CartController extends Controller
         }
 
         return view('cart.index')->with('cartItems', $cartItems)->with('subtotal', $subtotal);
-        // return redirect()->route('cart.index')->with('cartItems', $cartItems);
     }
 
     // Add to Cart
@@ -100,5 +102,80 @@ class CartController extends Controller
         Session::flash('success','Item(s) successfully removed from cart ');
 
         return redirect()->route('cart.index');
+    }
+
+    // Process Order Form
+    public function check_order(Request $request)
+    {
+        // Validate form data
+        $this->validate($request, ['fName'=>'required|string|max:255',
+                                   'lName'=>'required|string|max:255',
+                                   'phone'=>'required|digits:11',
+                                   'email'=>'required|email|max:255']); 
+        
+        // Create new Order object
+        $order = new Order;
+        // Save order form & session values to Order object attributes
+        $order->fName = $request->fName;
+        $order->lName = $request->lName;
+        $order->phone = $request->phone;
+        $order->email = $request->email;
+        $order->session_id = Session::get('session_id');
+        $order->ip_address = Session::get('ip_address');
+        // Save object to db
+        $order->save();
+
+        // Retrieve the "order_id" (of current session's order)
+        $orderID = DB::table('order_info')
+            ->select('id as order_id', 'session_id', 'ip_address')
+            ->where('session_id', '=', Session::get('session_id'))
+            ->where('ip_address', '=', Session::get('ip_address'));
+        // Join order_info table to shopping_cart table based on matching session variables
+        $cart = DB::table('shopping_cart AS cart')
+            ->select('order_id','cart.item_id', 'cart.quantity as cart_quantity', 'cart.session_id', 'cart.ip_address')
+            ->joinSub($orderID, 'order', function ($join) {
+                $join->on('cart.session_id', '=', 'order.session_id');
+                $join->on('cart.ip_address', '=', 'order.ip_address');
+            });
+        // Join items table to shopping_cart table based on matching item ids
+        $items = DB::table('items')
+        ->select('items.id as item_id', 'items.price as item_price', 'items.title as item_name', 'order_id', 'cart_quantity')
+        ->joinSub($cart, 'cart', function ($join) {
+            $join->on('items.id', '=', 'cart.item_id');
+        })->get();
+
+        // Loop through each item in cart and save to items_sold table
+        $itemSold = new Receipt;
+
+        $order_id = 0;
+        foreach($items as $item)
+        {
+            $itemSold->item_id = $item->item_id;
+            $itemSold->order_id = $item->order_id;
+            $itemSold->price = $item->item_price;
+            $itemSold->quantity = $item->cart_quantity;
+            $itemSold->save();
+
+            $order_id = $item->order_id;
+        }
+
+        // Redirect to thankyou pg
+        return redirect()->route('cart.thankyou', $order_id);
+    }
+
+    public function show($order_id)
+    {
+        $customer_info = Order::find($order_id);
+
+        $items_ordered = Receipt::join('items', 'items_sold.item_id', '=', 'items.id')
+            ->where('items_sold.order_id', $order_id)
+            ->get(['items.title', 'items_sold.*']);
+        
+            $order_total = 0.00;
+            foreach($items_ordered as $item)
+            {
+                $order_total += ($item->price * $item->quantity);
+            }
+        return view('cart.thankyou')->with('customer_info', $customer_info)->with('items_ordered', $items_ordered)->with('order_id', $order_id)->with('order_total', $order_total);
     }
 }

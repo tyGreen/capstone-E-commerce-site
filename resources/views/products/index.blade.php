@@ -31,14 +31,16 @@ Laravel Project
         // Get user's ip address & store in var
         $user_ip = Request::ip();
 
-        // Get current session id & store in var
+        // (Re)generate new session id
         $user_session = Session::getId();
             // $session_id = session()->getId();    ALTERNATIVE
 
         // Set session id and ip address to those passed into f(x)
         Session::put('session_id', $user_session);
         Session::put('ip_address', $user_ip);
-	}      
+	}    
+	
+ 
 @endphp 
 
 	<div class="row">

@@ -26,14 +26,15 @@ Laravel Project
         // Get user's ip address & store in var
         $user_ip = Request::ip();
 		
-        // Get current session id & store in var
-        $user_session = Session::getId();
+        // (Re)generate new session id
+        $user_session = session()->regnerate();
             // $session_id = session()->getId();    ALTERNATIVE
 
         // Set session id and ip address to those passed into f(x)
         Session::put('session_id', $user_session);
         Session::put('ip_address', $user_ip);
-	}      
+	}  
+    
 @endphp 
 	
 	<div class="row">
@@ -75,5 +76,6 @@ Laravel Project
 			</table>
 		</div> <!-- end of .col-md-8 -->
 	</div>
+
 
 @endsection

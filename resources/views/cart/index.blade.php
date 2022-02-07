@@ -10,6 +10,14 @@ Shopping Cart
 Laravel Project
 @endsection
 
+@section('scripts')
+{!! Html::script('/bower_components/parsleyjs/dist/parsley.min.js') !!}
+@endsection
+
+@section('css')
+{!! Html::style('/css/parsley.css') !!}
+@endsection
+
 @section('content')
 
 @php
@@ -28,14 +36,15 @@ Laravel Project
         // Get user's ip address & store in var
         $user_ip = Request::ip();
 
-        // Get current session id & store in var
-        $user_session = Session::getId();
+        // (Re)generate new session id
+        $user_session = session()->regenerate();
             // $session_id = session()->getId();    ALTERNATIVE
 
         // Set session id and ip address to those passed into f(x)
         Session::put('session_id', $user_session);
         Session::put('ip_address', $user_ip);
-	}      
+	}  
+
 @endphp 
 
 	<div class="row">
@@ -49,8 +58,7 @@ Laravel Project
 		</div>
 	</div>
 
-		{{-- ITEMS TABLE [RIGHT] --}}
-		<div class="col-md-11 col-md-offset-1">
+	<div class="col-md-11 col-md-offset-1">
 			<table class="table">
 				<thead>
 					<th>title</th>
@@ -69,10 +77,7 @@ Laravel Project
                             <td>{{ number_format($cartItem->price, 2, '.', ',') }}</td>
 
 							<td style='width:70px;'>
-                                {{-- <div style='float:left; margin-right:5px;'>
-                                    <a href="{{ route('cart.update_cart', $cartItem->item_id) }}" class="btn btn-success btn-sm">Update</a>
-                                </div> --}}
-								{{ Form::submit('Update', ['class'=>'btn btn-sm btn-success btn-block', 'style'=>'', 'onclick'=>'return confirm("Update cart?")']) }}
+								{{ Form::submit('Update', ['class'=>'btn btn-sm btn-success btn-block', 'style'=>'']) }}
 							{!! Form::close() !!}
 							</td style='width:70px;'>
 							<td>
@@ -84,11 +89,45 @@ Laravel Project
 					@endforeach
 				</tbody>
 			</table>
-			<div class="col-md-12 col-md-offset-1 text-center">
-				<p><b>subtotal:<b> ${{ number_format($subtotal, 2, '.', ',') }}</p>
-			</div>
-		</div> <!-- end of items table (right) -->
+		</div> <!-- end of cart items table -->
 
-	</div>
+		{{-- SUBTOTAL --}}
+		<div class="col-md-12 col-md-offset-2 text-center">
+			<p><b>subtotal:<b> ${{ number_format($subtotal, 2, '.', ',') }}</p>
+		</div>
+
+		{{-- CUSTOMER INFO FORM --}}
+		<div class="col-md-4 col-md-offset-0">
+		</div>
+		<div class="col-md-4 col-md-offset-1">
+			{!! Form::open(['route' => 'cart.check_order', 'data-parsley-validate' => '']) !!}
+			    
+				{{ Form::label('fName', 'First Name:') }}
+			    {{ Form::text('fName', null, ['class'=>'form-control', 'style'=>'', 
+			                                  'data-parsley-required'=>'',
+											  'data-parsley-maxlength'=>'255']) }}
+
+				{{ Form::label('lName', 'Last Name:') }}
+				{{ Form::text('lName', null, ['class'=>'form-control', 'style'=>'', 
+							  'data-parsley-required'=>'', 
+							  'data-parsley-maxlength'=>'255']) }}
+
+				{{ Form::label('phone', 'Phone:') }}
+				{{ Form::text('phone', null, ['class'=>'form-control', 'style'=>'', 
+							  'data-parsley-required'=>'',
+							  'data-parsley-type' =>'digits',
+							  'data-parsley-minlength'=>'11',
+							  'data-parsley-maxlength'=>'11']) }}
+
+				{{ Form::label('email', 'Email:') }}
+				{{ Form::email('email', null, ['class'=>'form-control', 'style'=>'', 
+							  'data-parsley-required'=>'', 
+							  'data-parsley-maxlength'=>'255',
+							  'data-parsley-type' =>'email']) }}
+
+			    {{ Form::submit('Submit Order', ['class'=>'btn btn-success btn-lg btn-block', 'style'=>'margin-top:20px']) }}
+
+			{!! Form::close() !!}
+		</div>
 
 @endsection
