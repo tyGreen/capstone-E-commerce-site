@@ -26,16 +26,18 @@ Laravel Project
                 <h2>Items Ordered</h2>
 				<thead>
 					<th>Item ID</th>
-					<th>Item Name</th>
+					<th>Item</th>
 					<th>Unit Price</th>
-                    <th>Quantity Ordered</th>
+					<th>Item Subtotal</th>
+                    <th>Item Quantity</th>
 				</thead>
 				<tbody> 
                     @foreach($item_details as $item_detail)
 						<tr>
 							<td>{{ $item_detail->item_id }}</td>
 							<td>{{ $item_detail->name }}</td>
-                            <td>{{ number_format($item_detail->price, 2, '.', ',') }}</td>
+                            <td>${{ number_format($item_detail->price, 2, '.', ',') }}</td>
+							<td>${{ number_format($item_detail->quantity * $item_detail->price, 2, '.', ',') }}</td>
                             <td>{{ $item_detail->quantity }}</td>
 						</tr>
                     @endforeach

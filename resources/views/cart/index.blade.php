@@ -22,28 +22,21 @@ Laravel Project
 
 @php
 // GET current session data
-	// If current session has session id & ip address set
-	if(Session::has('session_id') && Session::has('ip_address'))
+	// If current session does not have session id & ip address set
+	if(!session()->has('session_id') && !session()->has('ip_address'))	
 	{
-		// Echo id & ip to screen
-		echo "session_id: " . Session::get('session_id');
-		echo "<br/>";
-		echo "ip_address: " . Session::get('ip_address');
-	}
-	else
-	{
-		// Otherwise, create new session
+		// Create new session
         // Get user's ip address & store in var
         $user_ip = Request::ip();
-
+		
         // (Re)generate new session id
-        $user_session = session()->regenerate();
+		$user_session = Session::getId();
             // $session_id = session()->getId();    ALTERNATIVE
 
         // Set session id and ip address to those passed into f(x)
         Session::put('session_id', $user_session);
         Session::put('ip_address', $user_ip);
-	}  
+	}
 
 @endphp 
 
@@ -61,11 +54,11 @@ Laravel Project
 	<div class="col-md-11 col-md-offset-1">
 			<table class="table">
 				<thead>
-					<th>title</th>
-					<th>quantity</th>
-					<th>price</th>
+					<th>Product</th>
+					<th>Quantity</th>
+					<th>Unit price</th>
+					<th>Product subtotal</th>
 					<th></th> 
-					<th></th>
 				</thead>
 				<tbody>
 					@foreach ($cartItems as $cartItem)
@@ -74,17 +67,22 @@ Laravel Project
 							{!! Form::model($cartItem, ['route' => ['cart.update_cart', $cartItem->item_id], 'method'=>'PUT', 'data-parsley-validate' => '']) !!}
 
 							<td> <input type="number" name="productQuantity" min="0" value="{{  $cartItem->quantity }}"></td>
-                            <td>{{ number_format($cartItem->price, 2, '.', ',') }}</td>
+                            <td>${{ number_format($cartItem->price, 2, '.', ',') }}</td>
+							<td>${{ number_format($cartItem->quantity * $cartItem->price, 2, '.', ',') }}</td>
+
 
 							<td style='width:70px;'>
 								{{ Form::submit('Update', ['class'=>'btn btn-sm btn-success btn-block', 'style'=>'']) }}
 							{!! Form::close() !!}
-							</td style='width:70px;'>
-							<td>
+								<div style='float:left;'>
+									<a href="{{ route('cart.remove_item', $cartItem->item_id) }}" class="btn btn-danger btn-sm">Remove</a>
+								</div>
+							</td>
+							{{-- <td style='width:70px;'>
 								<div style='float:left;'>
                                     <a href="{{ route('cart.remove_item', $cartItem->item_id) }}" class="btn btn-danger btn-sm">Remove</a>
                                 </div>
-							</td>
+							</td> --}}
 						</tr>
 					@endforeach
 				</tbody>
@@ -93,7 +91,7 @@ Laravel Project
 
 		{{-- SUBTOTAL --}}
 		<div class="col-md-12 col-md-offset-2 text-center">
-			<p><b>subtotal:<b> ${{ number_format($subtotal, 2, '.', ',') }}</p>
+			<p><b>Cart subtotal:<b> ${{ number_format($subtotal, 2, '.', ',') }}</p>
 		</div>
 
 		{{-- CUSTOMER INFO FORM --}}

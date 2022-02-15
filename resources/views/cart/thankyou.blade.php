@@ -34,17 +34,19 @@ Laravel Project
 				<table class="table">
 					<h2>Items Ordered</h2>
 					<thead>
-						<th>item id</th>
-						<th>item name</th>
-						<th>item price</th>
-						<th>item quantity</th>
+						<th>Product ID</th>
+						<th>Product</th>
+						<th>Unit Price</th>
+						<th>Product Subtotal</th>
+						<th>Product Quantity</th>
 					</thead>
 					<tbody> 
 						@foreach($items_ordered as $item)
 							<tr>
 								<td>{{ $item->item_id }}</td>
 								<td>{{ $item->title }}</td>
-								<td>{{ number_format($item->price, 2, '.', ',') }}</td>
+								<td>${{ number_format($item->price, 2, '.', ',') }}</td>
+								<td>${{ number_format($item->quantity * $item->price, 2, '.', ',') }}</td>
 								<td>{{ $item->quantity }}</td>
 							</tr>
 						@endforeach
@@ -52,7 +54,7 @@ Laravel Project
 				</table>
 				{{-- Cost of Order --}}
 				<div class="col-md-12 col-md-offset-0 text-center">
-					<b>Cost of Order:</b> ${{ number_format($order_total,2,'.',',') }}
+					<b>Order Total:</b> ${{ number_format($order_total,2,'.',',') }}
 				</div>
 				<br/>
 				<br/>

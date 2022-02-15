@@ -17,29 +17,21 @@ Laravel Project
 
 @php
 // GET current session data
-	// If current session has session id & ip address set
-	if(Session::has('session_id') && Session::has('ip_address'))
-	{
-		// Echo id & ip to screen
-		echo "session_id: " . Session::get('session_id');
-		echo "<br/>";
-		echo "ip_address: " . Session::get('ip_address');
-	}
-	else
-	{
-		// Otherwise, create new session
-        // Get user's ip address & store in var
-        $user_ip = Request::ip();
+	// If current session does not have session id & ip address set
+	if(!session()->has('session_id') && !session()->has('ip_address'))
+		{
+			// Create new session
+			// Get user's ip address & store in var
+			$user_ip = Request::ip();
+			
+			// (Re)generate new session id
+			$user_session = Session::getId();
+				// $session_id = session()->getId();    ALTERNATIVE
 
-        // (Re)generate new session id
-        $user_session = Session::getId();
-            // $session_id = session()->getId();    ALTERNATIVE
-
-        // Set session id and ip address to those passed into f(x)
-        Session::put('session_id', $user_session);
-        Session::put('ip_address', $user_ip);
-	}    
-	
+			// Set session id and ip address to those passed into f(x)
+			Session::put('session_id', $user_session);
+			Session::put('ip_address', $user_ip);
+		}	    
  
 @endphp 
 
@@ -95,7 +87,7 @@ Laravel Project
 									{{ $item->title }}
 								</a>
 							</td>
-                            <td>{{ number_format($item->price, 2, '.', ',') }}</td>
+                            <td>${{ number_format($item->price, 2, '.', ',') }}</td>
 
 							<td style='width:70px;'>
                                 <div style='float:left; margin-right:5px;'>

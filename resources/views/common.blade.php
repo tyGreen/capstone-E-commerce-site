@@ -19,6 +19,9 @@
     <![endif]-->
   </head>
   <body>
+    
+    {{-- Only render nav bar if user logged in --}}
+    @if(Auth::check())
      <nav class="navbar navbar-default">
       <div class="container-fluid">
         <!-- Brand and toggle get grouped for better mobile display -->
@@ -46,12 +49,15 @@
         </div><!-- /.navbar-collapse -->
       </div><!-- /.container-fluid -->
     </nav> 
+  @endif
+
     <div class="row" id='main'>
       <div class="container">
           @include('partials._messages')
           @yield('content')
       </div> <!-- .container -->
     </div>
+    
 
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
     <script src="/bower_components/jquery/dist/jquery.min.js"></script> 

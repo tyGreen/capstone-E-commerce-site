@@ -139,7 +139,7 @@ class CartController extends Controller
             });
         // Join items table to shopping_cart table based on matching item ids
         $items = DB::table('items')
-        ->select('items.id as item_id', 'items.price as item_price', 'items.title as item_name', 'order_id', 'cart_quantity')
+        ->select('items.id as item_id', 'items.price as item_price', 'items.title as item_name', 'order_id', 'cart_quantity', 'items.quantity as inventory')
         ->joinSub($cart, 'cart', function ($join) {
             $join->on('items.id', '=', 'cart.item_id');
         })->get();
@@ -155,6 +155,10 @@ class CartController extends Controller
             $itemSold->price = $item->item_price;
             $itemSold->quantity = $item->cart_quantity;
             $itemSold->save();
+
+            // Update item quantities in items table
+            $item_to_update = Item::find($item->item_id);
+            $item_to_update->decrement('quantity', $item->cart_quantity);
 
             $order_id = $item->order_id;
         }
