@@ -14,7 +14,6 @@ Laravel Project
 @if(!session()->has('session_id'))
 	{{-- Redirect to products page --}}
 	@php
-		echo "session id not set";
 		return redirect()->route('products.index')->send();
 	@endphp
 @else

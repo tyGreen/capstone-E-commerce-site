@@ -145,11 +145,11 @@ class CartController extends Controller
         })->get();
 
         // Loop through each item in cart and save to items_sold table
-        $itemSold = new Receipt;
+        // $itemSold = new Receipt;
 
-        $order_id = 0;
         foreach($items as $item)
         {
+            $itemSold = new Receipt;
             $itemSold->item_id = $item->item_id;
             $itemSold->order_id = $item->order_id;
             $itemSold->price = $item->item_price;
@@ -157,14 +157,12 @@ class CartController extends Controller
             $itemSold->save();
 
             // Update item quantities in items table
-            $item_to_update = Item::find($item->item_id);
-            $item_to_update->decrement('quantity', $item->cart_quantity);
-
-            $order_id = $item->order_id;
+            $item_to_update = Item::find($itemSold->item_id);
+            $item_to_update->decrement('quantity', $itemSold->quantity);
         }
 
         // Redirect to thankyou pg
-        return redirect()->route('cart.thankyou', $order_id);
+        return redirect()->route('cart.thankyou', $itemSold->order_id);
     }
 
     public function show($order_id)

@@ -41,23 +41,29 @@ Laravel Project
 @endphp 
 
 	<div class="row">
-		<div class="col-md-8 col-md-offset-1">
+		<div class="col-md-5 col-md-offset-1">
 			<h1>Your Cart</h1>
 		</div>
-		<div class="col-md-2">
+		<div class="col-md-2 col-md-offset-4">
+			<a href="{{ route('products.index') }}" margin-top="5px">&lt;&lt; Back to Products</a>
 		</div>
-		<div class="col-md-12">
+	</div>
+	<div class="row">
+		<div class="col-md-11 col-md-offset-1">
 			<hr />
 		</div>
 	</div>
+		
+		
+
 
 	<div class="col-md-11 col-md-offset-1">
 			<table class="table">
 				<thead>
 					<th>Product</th>
 					<th>Quantity</th>
-					<th>Unit price</th>
-					<th>Product subtotal</th>
+					<th>Unit Price</th>
+					<th>Product Subtotal</th>
 					<th></th> 
 				</thead>
 				<tbody>
@@ -90,8 +96,8 @@ Laravel Project
 		</div> <!-- end of cart items table -->
 
 		{{-- SUBTOTAL --}}
-		<div class="col-md-12 col-md-offset-2 text-center">
-			<p><b>Cart subtotal:<b> ${{ number_format($subtotal, 2, '.', ',') }}</p>
+		<div class="col-md-12 col-md-offset-3 text-center">
+			<p><b>Cart Subtotal:<b> ${{ number_format($subtotal, 2, '.', ',') }}</p>
 		</div>
 
 		{{-- CUSTOMER INFO FORM --}}

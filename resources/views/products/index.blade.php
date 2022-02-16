@@ -36,17 +36,21 @@ Laravel Project
 @endphp 
 
 	<div class="row">
-		<div class="col-md-8 col-md-offset-1">
-			<h1>Product List</h1>
+		<div class="col-md-11 col-md-offset-1">
+			<h1>Products</h1>
 		</div>
-		<div class="col-md-2">
-		</div>
-		<div class="col-md-12">
+		
+	</div>
+	<div class="row">
+		<div class="col-md-11 col-md-offset-1">
 			<hr />
 		</div>
 	</div>
-
-	
+	<div class="row">
+		<div class="col-md-11 col-md-offset-11">
+			<a href="{{ route('cart.index') }}"><img src="{{ Storage::url('images/img_btn_cart.png') }}" title="Go to Cart" alt="Go to Cart"></a>
+		</div>
+	</div>
 	<div class="row">
 		{{-- CATEGORY TABLE [LEFT] --}}
 		<div class="col-md-2 col-md-offset-1">
@@ -55,6 +59,9 @@ Laravel Project
 					<th>Categories</th>
 				</thead>
 				<tbody>
+					<tr>
+						<th><a href="{{ route('products.index') }}">All Products</a></th>
+					</tr>
 					@foreach ($categories as $category)
 						<tr>
 							<th><a href="{{ route('products.show', $category->id) }}">{{ $category->name }}</a></th>
@@ -91,8 +98,12 @@ Laravel Project
 
 							<td style='width:70px;'>
                                 <div style='float:left; margin-right:5px;'>
-                                    <a href="{{ route('cart.addToCart', $item->id) }}" class="btn btn-success btn-sm" method="POST">Add To Cart</a>
-                                </div>
+                                    @if($item->quantity > 0)
+										<a href="{{ route('cart.addToCart', $item->id) }}" class="btn btn-success btn-sm" method="POST">Add To Cart</a>
+									@else
+										<a class="btn btn-danger btn-sm" disabled>Sold Out</a>
+									@endif
+								</div>
                                 <div style='float:left;'>
                                 </div>
 							</td>

@@ -65,6 +65,14 @@ Laravel Project
 				<li><b>Stock:</b> {{ $item->quantity }} </li>
 				<li><b>Item ID:</b> {{ $item->id }} </li>
 				<li><b>SKU:</b> {{ $item->sku }} </li>
+				<br />
+				<div style='float:left; margin-right:5px;'>
+					@if($item->quantity > 0)
+						<a href="{{ route('cart.addToCart', $item->id) }}" class="btn btn-success btn-sm" method="POST">Add To Cart</a>
+					@else
+						<a class="btn btn-danger btn-sm" disabled>Sold Out</a>
+					@endif
+				</div>
 			</ul>
 		</div>
 		<div class="col-md-3 col-md-offset-0">
